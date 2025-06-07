@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.32.3"
-scikit-learn = "^1.6.1"
+scikit-learn = "^1.4.2"
 bibtexparser = "^1.4.3"
 scispacy = "^0.5.5"
 # en-core-sci-sm = {url = "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_core_sci_sm-0.5.4.tar.gz"}
