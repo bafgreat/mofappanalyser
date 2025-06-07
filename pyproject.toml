@@ -20,7 +20,10 @@ torch = [
 # chemdataextractor = { path = "./chemdataextractormof", develop = true }
 # chemdataextractor2 = "^2.4.0"
 # en-ner-bc5cdr-md = {url = "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz"}
-bertopic = "^0.17.0"
+bertopic = [
+    { version = "^0.17.0", markers = "sys_platform == 'darwin'" },
+    { version = ">=0.9.0,<1.0.0", markers = "sys_platform == 'linux'" }
+]
 # openai = "^1.84.0"
 sentence-transformers = "^2.2.2"
 # torch-geometric = "^2.6.1"
