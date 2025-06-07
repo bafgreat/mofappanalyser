@@ -20,7 +20,7 @@ en-ner-bc5cdr-md = {url = "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/re
 bertopic = "^0.17.0"
 openai = "^1.84.0"
 sentence-transformers = "^4.1.0"
-torch-geometric = "^2.6.1"
+# torch-geometric = "^2.6.1"
 matplotlib = "^3.10.3"
 
 
