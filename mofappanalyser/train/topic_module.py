@@ -45,9 +45,9 @@ class ChemTextPreprocessor:
         self.remove_stopwords = remove_stopwords
         self.min_token_length = min_token_length
 
-        self.nlp = spacy.load("en_core_sci_sm")
-        self.stopwords = set(stopwords.words("english")) | self.nlp.Defaults.stop_words
-
+        # self.nlp = spacy.load("en_core_sci_sm")
+        # self.stopwords = set(stopwords.words("english")) | self.nlp.Defaults.stop_words
+        self.stopwords = set(stopwords.words("english"))
         self.transformer_tokenizer = AutoTokenizer.from_pretrained(transformer_model)
         self.transformer_model = models.Transformer(
             transformer_model,
