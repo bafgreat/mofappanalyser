@@ -187,13 +187,13 @@ class BERTTopicModeler:
         plt.grid(True)
         plt.show()
 
-data = filetyper.load_data('../../data/mofs_articles_cleaned.csv')
-df = data.sample(n=5000, random_state=42)
+# data = filetyper.load_data('../../data/mofs_articles_cleaned.csv')
+# df = data.sample(n=5000, random_state=42)
 
-modeler = BERTTopicModeler()
-df_topics, topic_model = modeler.fit_transform(df, text_column="text")
-nr_topics_list, coherence_values = modeler.compute_coherence_values(start=5, limit=50, step=5, coherence='c_v')
-modeler.plot_coherence(nr_topics_list, coherence_values)
-print(df_topics[['text', 'topic']].head())
-topic_model.visualize_topics().show()
+# modeler = BERTTopicModeler()
+# df_topics, topic_model = modeler.fit_transform(df, text_column="text")
+# nr_topics_list, coherence_values = modeler.compute_coherence_values(start=5, limit=50, step=5, coherence='c_v')
+# modeler.plot_coherence(nr_topics_list, coherence_values)
+# print(df_topics[['text', 'topic']].head())
+# topic_model.visualize_topics().show()
 
