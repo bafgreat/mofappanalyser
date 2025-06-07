@@ -1,0 +1,9 @@
+.pyenv/
+.vscode/
+._*
+.history/
+log.txt
+tde_log.txt
+__pycache__
+chemdataextractormof
+poetry.lock

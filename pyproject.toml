@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "mofappanalyser"
+version = "0.1.0"
+description = ""
+authors = ["Dinga Wonanke <dak52@uclive.ac.nz>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+scikit-learn = "^1.6.1"
+bibtexparser = "^1.4.3"
+scispacy = "^0.5.5"
+en-core-sci-sm = {url = "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_core_sci_sm-0.5.4.tar.gz"}
+pyldavis = "^3.4.1"
+torch = "2.2.2"
+chemdataextractor = { path = "./chemdataextractormof", develop = true }
+# chemdataextractor2 = "^2.4.0"
+en-ner-bc5cdr-md = {url = "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz"}
+bertopic = "^0.17.0"
+openai = "^1.84.0"
+sentence-transformers = "^4.1.0"
+torch-geometric = "^2.6.1"
+matplotlib = "^3.10.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+
