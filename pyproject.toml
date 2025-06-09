@@ -22,7 +22,7 @@ torch = [
 # en-ner-bc5cdr-md = {url = "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz"}
 bertopic = [
     { version = "^0.17.0", markers = "sys_platform == 'darwin'" },
-    { version = "^0.9.0", markers = "sys_platform == 'linux'" }
+    { version = "^0.17.0", markers = "sys_platform == 'linux'" }
 ]
 # openai = "^1.84.0"
 sentence-transformers = "^2.2.2"
