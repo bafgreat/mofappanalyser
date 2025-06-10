@@ -30,6 +30,7 @@ sentence-transformers = "4.1.0"
 matplotlib = "^3.3"
 spacy = "^3.8.7"
 nltk = "^3.9.1"
+numpy = "1.26.4"
 
 
 
