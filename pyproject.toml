@@ -25,9 +25,11 @@ bertopic = [
     { version = "^0.17.0", markers = "sys_platform == 'linux'" }
 ]
 # openai = "^1.84.0"
-sentence-transformers = "^2.2.2"
+sentence-transformers = "4.1.0"
 # torch-geometric = "^2.6.1"
 matplotlib = "^3.3"
+spacy = "^3.8.7"
+nltk = "^3.9.1"
 
 
 
