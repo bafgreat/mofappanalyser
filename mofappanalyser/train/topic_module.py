@@ -1,3 +1,4 @@
+import os
 import warnings
 import re
 import string
@@ -15,8 +16,14 @@ from transformers import AutoTokenizer, AutoModel
 from sentence_transformers import models
 from mofappanalyser.read_write import filetyper
 
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 # Download required NLTK data
-nltk.download('punkt')
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
 try:
     nltk.data.find("corpora/stopwords")
 except LookupError:
@@ -28,10 +35,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class ChemTextPreprocessor:
     """
-    Chemistry-aware text preprocessing using ChemDataExtractor, SciSpaCy, and SciBERT tokenizer.
-
-    Supports both classic NLP cleaning with transformer-based tokenization,
-    and minimal pre-tokenized inputs for SciBERT embedding.
+    Chemistry-aware text preprocessing using SciBERT tokenizer and SciSpaCy lemmatizer.
 
     Attributes:
         lemmatize (bool): Whether to apply lemmatization.
@@ -45,9 +49,11 @@ class ChemTextPreprocessor:
         self.remove_stopwords = remove_stopwords
         self.min_token_length = min_token_length
 
-        # self.nlp = spacy.load("en_core_sci_sm")
-        # self.stopwords = set(stopwords.words("english")) | self.nlp.Defaults.stop_words
-        self.stopwords = set(stopwords.words("english"))
+
+        self.nlp = spacy.load("en_core_sci_sm", disable=["ner", "parser"])
+
+        self.stopwords = set(stopwords.words("english")) | self.nlp.Defaults.stop_words
+
         self.transformer_tokenizer = AutoTokenizer.from_pretrained(transformer_model)
         self.transformer_model = models.Transformer(
             transformer_model,
@@ -63,14 +69,15 @@ class ChemTextPreprocessor:
 
     def preprocess_for_text(self, text: str):
         """
-        Tokenize using transformer tokenizer, then apply optional lemmatization and stopword removal.
+        Clean, tokenize, lemmatize (optional), and filter tokens for topic modeling.
         """
+        # Clean text
         text = text.lower()
         text = re.sub(r"\s+", " ", text)
         text = re.sub(r"[\u2018\u2019\u201c\u201d]", "'", text)
         text = re.sub(r"\bnan\b", "", text)
         text = re.sub(r"[“”]", '', text)
-        text = text.translate(str.maketrans('', '', string.punctuation.replace('+', '')))
+        # text = text.translate(str.maketrans('', '', string.punctuation.replace('+', '')))
 
         tokens = self.transformer_tokenizer.tokenize(text)
 
@@ -107,9 +114,17 @@ class BERTTopicModeler:
         pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
         embedding_model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
-        vectorizer_model = CountVectorizer(stop_words="english", ngram_range=(1, 3), min_df=5)
+        vectorizer_model = CountVectorizer(stop_words="english", ngram_range=(1, 3), min_df=1)
         self.topic_model = BERTopic(embedding_model=embedding_model, vectorizer_model=vectorizer_model)
         self.documents = None
+
+    @classmethod
+    def load_model(cls, path: str = "bertopic_model"):
+        """Load a BERTopic model from disk."""
+        instance = cls.__new__(cls)  # bypass __init__
+        instance.topic_model = BERTopic.load(path)
+        instance.documents = None
+        return instance
 
     def preprocess(self, text: str) -> str:
         """
@@ -141,6 +156,11 @@ class BERTTopicModeler:
         df_result['topic'] = topics
         df_result['topic_prob'] = probs
         return df_result, self.topic_model
+
+
+    def save_model(self, path: str = "bertopic_model"):
+        """Save the BERTopic model to disk."""
+        self.topic_model.save(path)
 
     def compute_coherence_values(self, start=5, limit=50, step=5, coherence='c_v'):
         """
@@ -187,8 +207,32 @@ class BERTTopicModeler:
         plt.grid(True)
         plt.show()
 
+
+if __name__ == "__main__":
+    data = filetyper.load_data('../../data/mofs_articles_cleaned.csv')
+    df = data.sample(n=30000, random_state=42)
+
+    modeler = BERTTopicModeler()
+    # modeler = BERTTopicModeler.load_model("bertopic_mof_model")
+    # modeler.topic_model.visualize_topics().show()
+    # modeler.topic_model.visualize_barchart().show()
+    df_topics, topic_model = modeler.fit_transform(df, text_column="text")
+    df_topics.to_csv("mof_topics.csv", index=False)
+
+    modeler.save_model("bertopic_mof_model")
+
+    # nr_topics_list, coherence_values = modeler.compute_coherence_values(
+    #     start=5, limit=50, step=5, coherence='c_v'
+    # )
+
+    # modeler.plot_coherence(nr_topics_list, coherence_values)
+
+    # print(df_topics[['text', 'topic']].head())
+    # topic_model.visualize_topics().show()
+
+
 # data = filetyper.load_data('../../data/mofs_articles_cleaned.csv')
-# df = data.sample(n=5000, random_state=42)
+# df = data.sample(n=500, random_state=42)
 
 # modeler = BERTTopicModeler()
 # df_topics, topic_model = modeler.fit_transform(df, text_column="text")
@@ -196,4 +240,11 @@ class BERTTopicModeler:
 # modeler.plot_coherence(nr_topics_list, coherence_values)
 # print(df_topics[['text', 'topic']].head())
 # topic_model.visualize_topics().show()
+
+# process = ChemTextPreprocessor(lemmatize=False)
+# test = data['text'].tolist()
+
+# print(test[100])
+# print(process.preprocess_for_text(test[100]))
+
 

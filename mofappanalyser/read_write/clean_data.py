@@ -28,9 +28,9 @@ def clean_df(filename):
     df_text["funding-text"] = df["funding-text"]
     df_text["text"] = df.apply(combine_text, axis=1)
 
-    df_text.to_csv('../../data/mofs_articles_cleaned.csv', index=False)
+    df_text.to_csv('../../data/final_cleaned_mofs_articles_data.csv', index=False)
 
     # print(df_text["research-areas"].unique())
 
 
-clean_df('../../data/mofs_articles.csv')
+# clean_df('../../data/final_mof_articles_data.csv')
