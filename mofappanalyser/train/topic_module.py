@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer
-from gensim.models import CoherenceModel
-from gensim.corpora import Dictionary
+# from gensim.models import CoherenceModel
+# from gensim.corpora import Dictionary
 from sentence_transformers import SentenceTransformer, models
 from transformers import AutoTokenizer, AutoModel
 from sentence_transformers import models
@@ -162,55 +162,55 @@ class BERTTopicModeler:
         """Save the BERTopic model to disk."""
         self.topic_model.save(path)
 
-    def compute_coherence_values(self, start=5, limit=50, step=5, coherence='c_v'):
-        """
-        Compute coherence values for different numbers of topics using BERTopic reduction.
+    # def compute_coherence_values(self, start=5, limit=50, step=5, coherence='c_v'):
+    #     """
+    #     Compute coherence values for different numbers of topics using BERTopic reduction.
 
-        Returns:
-            nr_topics_list: List of topic numbers
-            coherence_values: Corresponding coherence scores
-        """
-        if self.documents is None:
-            raise ValueError("You must call `fit_transform()` first to populate documents.")
+    #     Returns:
+    #         nr_topics_list: List of topic numbers
+    #         coherence_values: Corresponding coherence scores
+    #     """
+    #     if self.documents is None:
+    #         raise ValueError("You must call `fit_transform()` first to populate documents.")
 
-        tokenized_docs = [doc.lower().split() for doc in self.documents]
-        dictionary = Dictionary(tokenized_docs)
-        corpus = [dictionary.doc2bow(text) for text in tokenized_docs]
+    #     tokenized_docs = [doc.lower().split() for doc in self.documents]
+    #     dictionary = Dictionary(tokenized_docs)
+    #     corpus = [dictionary.doc2bow(text) for text in tokenized_docs]
 
-        coherence_values = []
-        nr_topics_list = []
+    #     coherence_values = []
+    #     nr_topics_list = []
 
-        for nr_topics in range(start, limit + 1, step):
-            reduced_model = self.topic_model.reduce_topics(self.documents, nr_topics=nr_topics)
-            topics = reduced_model.get_topics()
-            topic_words = [[word for word, _ in topics[i]] for i in topics if topics[i]]
+    #     for nr_topics in range(start, limit + 1, step):
+    #         reduced_model = self.topic_model.reduce_topics(self.documents, nr_topics=nr_topics)
+    #         topics = reduced_model.get_topics()
+    #         topic_words = [[word for word, _ in topics[i]] for i in topics if topics[i]]
 
-            cm = CoherenceModel(
-                topics=topic_words,
-                texts=tokenized_docs,
-                dictionary=dictionary,
-                coherence=coherence
-            )
-            coherence_score = cm.get_coherence()
-            coherence_values.append(coherence_score)
-            nr_topics_list.append(nr_topics)
+    #         cm = CoherenceModel(
+    #             topics=topic_words,
+    #             texts=tokenized_docs,
+    #             dictionary=dictionary,
+    #             coherence=coherence
+    #         )
+    #         coherence_score = cm.get_coherence()
+    #         coherence_values.append(coherence_score)
+    #         nr_topics_list.append(nr_topics)
 
-        return nr_topics_list, coherence_values
+    #     return nr_topics_list, coherence_values
 
-    def plot_coherence(self, nr_topics_list, coherence_values):
-        """Helper method to plot coherence vs nr_topics."""
-        plt.figure(figsize=(8, 5))
-        plt.plot(nr_topics_list, coherence_values, marker='o')
-        plt.xlabel("Number of Topics")
-        plt.ylabel("Coherence Score")
-        plt.title("Topic Coherence Optimization (BERTopic)")
-        plt.grid(True)
-        plt.show()
+    # def plot_coherence(self, nr_topics_list, coherence_values):
+    #     """Helper method to plot coherence vs nr_topics."""
+    #     plt.figure(figsize=(8, 5))
+    #     plt.plot(nr_topics_list, coherence_values, marker='o')
+    #     plt.xlabel("Number of Topics")
+    #     plt.ylabel("Coherence Score")
+    #     plt.title("Topic Coherence Optimization (BERTopic)")
+    #     plt.grid(True)
+    #     plt.show()
 
 
 if __name__ == "__main__":
     data = filetyper.load_data('../../data/mofs_articles_cleaned.csv')
-    df = data.sample(n=30000, random_state=42)
+    df = data.sample(n=300, random_state=42)
 
     modeler = BERTTopicModeler()
     # modeler = BERTTopicModeler.load_model("bertopic_mof_model")
