@@ -118,13 +118,30 @@ class BERTTopicModeler:
         self.topic_model = BERTopic(embedding_model=embedding_model, vectorizer_model=vectorizer_model)
         self.documents = None
 
+    def save_model(self, path: str = "bertopic_model", serialization: str = "safetensors"):
+        """Save the BERTopic model safely without relying on pickle."""
+        self.topic_model.save(path, serialization=serialization)
+
+    def save_model_as_pickle(self, path: str = "bertopic_model"):
+        """Save the BERTopic model to disk."""
+        self.topic_model.save(path)
+
     @classmethod
-    def load_model(cls, path: str = "bertopic_model"):
+    def load_model(cls, path: str = "bertopic_model", serialization: str = "safetensors"):
+        """Load the BERTopic model safely from disk."""
+        instance = cls.__new__(cls)
+        instance.topic_model = BERTopic.load(path, serialization=serialization)
+        instance.documents = None
+        return instance
+
+    @classmethod
+    def load_mode_as_pickle(cls, path: str = "bertopic_model"):
         """Load a BERTopic model from disk."""
         instance = cls.__new__(cls)  # bypass __init__
         instance.topic_model = BERTopic.load(path)
         instance.documents = None
         return instance
+
 
     def preprocess(self, text: str) -> str:
         """
@@ -156,11 +173,6 @@ class BERTTopicModeler:
         df_result['topic'] = topics
         df_result['topic_prob'] = probs
         return df_result, self.topic_model
-
-
-    def save_model(self, path: str = "bertopic_model"):
-        """Save the BERTopic model to disk."""
-        self.topic_model.save(path)
 
     # def compute_coherence_values(self, start=5, limit=50, step=5, coherence='c_v'):
     #     """
